@@ -50,8 +50,9 @@
 </template>
 
 <script>
-import axios from 'axios';
 import logo from '@/components/images/logo/logo.png';
+import api from '../../services/api';
+import toast from '../../services/toast';
 
 export default {
     data() {
@@ -60,17 +61,21 @@ export default {
             logoPath: logo,
         };
     },
-    created() {
+    mounted() {
         this.fetchProducts(); // Fetch products when the component is created
+        if (this.$route.query.statusPayment) {
+            toast.toastrSuccess('Thanh toán thành công');
+            this.updateInvoice(this.$route.query.id_invoice);
+            this.$router.push({ name: 'home' });
+        }
     },
     methods: {
-        async fetchProducts() {
+        fetchProducts() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/product');
-                if (response.data.message === 'Lấy data sản phẩm thành công') {
-                    // Set the products to be displayed (no filtering by gender)
-                    this.products = response.data.data;
-                }
+                api.get('product')
+                    .then((res) => {
+                        this.products = res.data.data;
+                    });
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
@@ -78,6 +83,9 @@ export default {
         // Navigate to the product details page
         goToProductDetails(productId) {
             this.$router.push({ name: 'product-details', params: { productId } });
+        },
+        updateInvoice($id) {
+            api.put('invoice/' + $id, { status: 1 });
         }
     },
 };

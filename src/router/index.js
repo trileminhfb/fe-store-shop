@@ -4,19 +4,30 @@ import EditProduct from "@/views/admin/editProduct.vue";
 
 const routes = [
   {
+    path: "/login",
+    name: "login",
+    component: () => import("../views/login/home.vue"),
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import("../views/register/home.vue"),
+  },
+  {
     path: "/",
     name: "home",
-    // component: () => import("../views/client/home.vue"),
-    component: () => import("../views/admin/home.vue"),
+    component: () => import("../views/client/home.vue"),
   },
   {
     path: "/men",
     name: "men",
+    meta: { requiresAuth: true },
     component: () => import("../views/client/men.vue"),
   },
   {
     path: "/women",
     name: "women",
+    meta: { requiresAuth: true },
     component: () => import("../views/client/women.vue"),
   },
   {
@@ -27,7 +38,7 @@ const routes = [
   {
     path: "/buy",
     name: "buy",
-    component: EditProduct,
+    component: () => import("../views/client/buy.vue"),
   },
   {
     path: "/cart",
@@ -59,6 +70,28 @@ const routes = [
 const router = createRouter({
   history: createWebHistory("/"),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = !!localStorage.getItem("token");
+  console.log("isLoggedIn: ", isLoggedIn);
+  console.log("token: ", localStorage.getItem("token"));
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isLoggedIn) {
+      console.log("isLoggedIn: ", isLoggedIn);
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath },
+      });
+    } else {
+      next();
+    }
+  } else if (to.path === "/login" && isLoggedIn) {
+    next({ path: "/" });
+  } else {
+    next();
+  }
 });
 
 export default router;

@@ -1,7 +1,7 @@
 <template>
     <div class="w-full h-screen flex justify-center mt-16">
         <div class="w-[80vw] h-full flex justify-center items-center flex-col">
-            <p class="font-extrabold text-3xl uppercase italic">Men's Clothes</p>
+            <p class="font-extrabold text-3xl uppercase italic">Women's Clothes</p>
             <div class="h-fit w-full grid grid-cols-4 gap-20 place-items-center">
                 <!-- Loop through products and display them -->
                 <div v-for="product in products" :key="product.id"
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '../../services/api';
 
 export default {
     data() {
@@ -31,13 +31,12 @@ export default {
         this.fetchProducts(); // Fetch products when the component is created
     },
     methods: {
-        async fetchProducts() {
+        fetchProducts() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/product');
-                if (response.data.message === 'Lấy data sản phẩm thành công') {
-                    // Filter the products to only show those with gender 0 (Women)
-                    this.products = response.data.data.filter(product => product.gender === 0);
-                }
+                api.get('product/gender/0')
+                    .then((res) => {
+                        this.products = res.data.data;
+                    });
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
