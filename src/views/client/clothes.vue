@@ -45,6 +45,7 @@
 <script>
 import axios from 'axios';
 import api from '../../services/api';
+import toast from '../../services/toast';
 
 export default {
     data() {
@@ -60,7 +61,7 @@ export default {
     methods: {
         async fetchProductDetails(productId) {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/product/${productId}`);
+                const response = await api.get(`product/${productId}`);
                 if (response.data && response.data.data) {
                     this.product = response.data.data; // Assign the product data
                 }
@@ -87,8 +88,8 @@ export default {
             }
             api.post('/cart', payload)
                 .then((res) => {
+                    toast.toastrSuccess("Add to cart success");
                 })
-            console.log('Adding to cart:', this.product, this.quantity);
         },
     }
 

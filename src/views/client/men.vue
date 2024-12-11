@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '../../services/api';
 
 export default {
     data() {
@@ -31,13 +31,12 @@ export default {
         this.fetchProducts(); // Fetch products when the component is created
     },
     methods: {
-        async fetchProducts() {
+        fetchProducts() {
             try {
-                const response = await axios.get('http://127.0.0.1:8000/api/product');
-                if (response.data.message === 'Lấy data sản phẩm thành công') {
-                    // Filter the products to only show those with gender 1 (Men)
-                    this.products = response.data.data.filter(product => product.gender === 1);
-                }
+                api.get('product/gender/1')
+                    .then((res) => {
+                        this.products = res.data.data;
+                    });
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
