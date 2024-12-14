@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Clothes from "../views/client/clothes.vue";
-import EditProduct from "@/views/admin/editProduct.vue";
 
 const routes = [
   {
@@ -51,18 +50,33 @@ const routes = [
     component: () => import("../views/client/profile.vue"),
   },
   {
-    path: "/product",
-    name: "product",
-    component: () => import("../views/admin/product.vue"),
+    path: "/order",
+    name: "order",
+    component: () => import("../views/client/order.vue"),
+  },
+  // -------------------------------------------------------ADMIN-------------------------------------------------------
+  {
+    path: "/admin",
+    name: "adminHome",
+    meta: { layout: "admin", requiresAuth: true },
+    component: () => import("../views/admin/home.vue"),
   },
   {
-    path: "/editProduct",
-    name: "edit-product",
-    component: () => import("../views/admin/editProduct.vue"),
+    path: "/admin/products",
+    name: "products",
+    meta: { layout: "admin", requiresAuth: true },
+    component: () => import("../views/admin/products.vue"),
   },
   {
-    path: "/addProduct",
-    name: "add-product",
+    path: "/admin/product/:id",
+    name: "detailProduct",
+    meta: { layout: "admin", requiresAuth: true },
+    component: () => import("../views/admin/detailProduct.vue"),
+  },
+  {
+    path: "/admin/addProduct",
+    name: "addProduct",
+    meta: { layout: "admin", requiresAuth: true },
     component: () => import("../views/admin/addProduct.vue"),
   },
 ];
