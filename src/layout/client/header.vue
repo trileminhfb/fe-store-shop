@@ -296,13 +296,9 @@ export default {
   },
   methods: {
     handleLogout() {
-      api.get("/logout").then((res) => {
-        console.log("res: ", res);
-      });
+      api.get("/logout");
       this.isLogin = false;
       localStorage.removeItem("token");
-      console.log(1232323);
-
       this.$router.push("/login");
     },
     onInput: _.debounce(function () {
