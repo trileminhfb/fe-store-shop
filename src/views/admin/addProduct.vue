@@ -1,52 +1,57 @@
 <template>
-    <div class="h-fit w-[80vw] mt-32 ml-[22rem] flex flex-row border-2">
-        <div class="flex flex-col h-fit items-center justify-center m-20">
-            <div class="h-60 w-60 border-2 border-black">
-                <img class="object-cover h-full" :src="itemPath" alt="Product Image">
-            </div>
-        </div>
-        <div class="flex flex-1 flex-col h-fit p-12">
-            <div class="h-full w-full flex flex-col gap-5 justify-start text-xl font-semibold">
-                <input class="font-bold text-3xl border" placeholder="Name Product" type="text">
-                <input class="h-20 border" placeholder="Description" type="text">
-                <div class="flex flex-row w-96 gap-5">
-                    <div class="flex-row flex gap-2 flex-1">
-                        <input class="w-32 border text-end" placeholder="Quantity" type="number">
-                        <p>Available</p>
-                    </div>
-                    <div class="flex-row flex gap-2 flex-1">
-                        <input class="w-32 border text-end" placeholder="Price" type="number">
-                        <p>VNĐ</p>
-                    </div>
-                </div>
-                <div class="flex flex-row gap-5 items-center">
-                    <select v-model="selectedGender" class="border p-2 w-32 h-12 text-base">
-                        <option value="1">MEN</option>
-                        <option value="0">WOMEN</option>
-                    </select>
-                    <p class="bg-green-500 h-12 flex items-center">Available</p>
-                </div>
+  <div
+    class="h-fit w-[80vw] mt-32 ml-[22rem] border-2 flex flex-col justify-center"
+  >
+    <FormEditProduct :product="product" @update:image="updateImage" />
 
-                <div class="flex flex-row gap-5">
-                    <input class="border w-60" placeholder="Category" type="text">
-                    <input class="border w-60" placeholder="Brand" type="text">
-                </div>
-                <button class="w-20 h-12 rounded-xl bg-orange-500" type="button">Save</button>
-            </div>
-        </div>
-    </div>
+    <button
+      @click="addProduct"
+      class="px-20 py-2 w-fit rounded-xl mx-auto bg-orange-500 font-bold text-white"
+      type="button"
+    >
+      Add
+    </button>
+  </div>
 </template>
 
 <script>
-import item from '@/components/images/item/item.png';
+import item from "@/components/images/item/item.png";
+import api from "../../services/api";
+import FormEditProduct from "../../components/images/admin/formEditProduct.vue";
 
 export default {
-    data() {
-        return {
-            itemPath: item, // Đường dẫn hình ảnh
-            selectedGender: '1', // Giá trị mặc định cho dropdown
-        };
+  data() {
+    return {
+      itemPath: item,
+      product: {
+        gender: 1,
+      },
+    };
+  },
+  components: {
+    FormEditProduct,
+  },
+  methods: {
+    addProduct() {
+      const formData = new FormData();
+      Object.entries(this.product).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      api
+        .post("product", this.product, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log("res: ", res.data.data);
+        });
     },
+    updateImage(file) {
+      this.product.image = file;
+    },
+  },
 };
 </script>
 
